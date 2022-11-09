@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CardReader;
+use App\Models\AccessRule;
 use Illuminate\Validation\Rule;
 
 class CardReaderController extends Controller
 {
     public function options()
     {
-        return response()->json(['codes' => config('codes.card_reader')]);
+        $accessRules = AccessRule::all()->keyBy('id');
+
+        return response()->json([
+            'accessRules' => $accessRules,
+            'codes' => config('codes.card_reader')
+        ]);
     }
 
     /**
@@ -22,7 +28,13 @@ class CardReaderController extends Controller
     public function index()
     {
         $cardReaders = CardReader::all();
-        return response()->json(['data' => $cardReaders, 'codes' => config('codes.card_reader')]);
+        $accessRules = AccessRule::all()->keyBy('id');
+
+        return response()->json([
+            'data' => $cardReaders, 
+            'accessRules' => $accessRules,
+            'codes' => config('codes.card_reader')
+        ]);
     }
 
     /**
@@ -60,8 +72,13 @@ class CardReaderController extends Controller
     public function show($id)
     {
         $cardReader = CardReader::findOrFail($id);
+        $accessRules = AccessRule::all()->keyBy('id');
 
-        return response()->json(['data' => $cardReader, 'codes' => config('codes.card_reader')]);
+        return response()->json([
+            'data' => $cardReader, 
+            'accessRules' => $accessRules,
+            'codes' => config('codes.card_reader')
+        ]);
     }
 
     /**
