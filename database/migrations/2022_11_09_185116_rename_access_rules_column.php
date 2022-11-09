@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attendees', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        //
+        Schema::table('access_rules', function (Blueprint $table) {
+            $table->renameColumn('check_attendee_level', 'check_attendee_type');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendees');
+        //
     }
 };

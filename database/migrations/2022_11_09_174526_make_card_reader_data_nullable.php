@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attendees', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        //
+        Schema::table('card_readers', function (Blueprint $table) {
+            $table->string('data')->nullable()->change();
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendees');
-    }
+        //
+    } 
 };

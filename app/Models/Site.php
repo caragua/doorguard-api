@@ -15,4 +15,10 @@ class Site extends Model
         'name',
         'location',
     ];
+
+    protected $casts = 
+    [
+        'name'      => 'string',
+        'location'  => 'string'
+    ];
 }

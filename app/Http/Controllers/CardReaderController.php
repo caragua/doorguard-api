@@ -5,16 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CardReader;
+use Illuminate\Validation\Rule;
 
 class CardReaderController extends Controller
 {
-    private $codes = [];
-
-    public function __construct()
+    public function options()
     {
-        $this->codes = CardReader::$codes;
+        return response()->json(['codes' => config('codes.card_reader')]);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -23,17 +22,7 @@ class CardReaderController extends Controller
     public function index()
     {
         $cardReaders = CardReader::all();
-        return response()->json($cardReaders);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json(['data' => $cardReaders, 'codes' => config('codes.card_reader')]);
     }
 
     /**
@@ -45,15 +34,15 @@ class CardReaderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'mac_address' => 'required|size:17',
-            'nickname' => 'required|max:32',
-            'function' => ['required', Rule::in($this->codes['function'])]
+            'mac_address'   => 'required|size:17',
+            'nickname'      => 'required|max:32',
+            'usage'         => ['required', Rule::in(array_keys(config('codes.card_reader.usage')))]
         ]);
 
         $do = new CardReader([
             'mac_address'   => $request->post('mac_address'),
             'nickname'      => $request->post('nickname'),
-            'function'      => $request->post('function'),
+            'usage'         => $request->post('usage'),
             'data'          => $request->post('data')
         ]);
 
@@ -72,18 +61,7 @@ class CardReaderController extends Controller
     {
         $cardReader = CardReader::findOrFail($id);
 
-        return response()->json($cardReader);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json(['data' => $cardReader, 'codes' => config('codes.card_reader')]);
     }
 
     /**
@@ -98,15 +76,15 @@ class CardReaderController extends Controller
         $do = CardReader::findOrFail($id);
         
         $request->validate([
-            'mac_address' => 'required|size:17',
-            'nickname' => 'required|max:32',
-            'function' => ['required', Rule::in($this->codes['function'])]
+            'mac_address'   => 'required|size:17',
+            'nickname'      => 'required|max:32',
+            'usage'         => ['required', Rule::in(array_keys(config('codes.card_reader.usage')))],
         ]);
 
-        $do->mac_address = $request->post('mac_address');
-        $do->nickname = $request->post('nickname');
-        $do->function = $request->post('function');
-        $do->data = $request->post('data');
+        $do->mac_address    = $request->post('mac_address');
+        $do->nickname       = $request->post('nickname');
+        $do->usage          = $request->post('usage');
+        $do->data           = $request->post('data');
 
         $do->save();
 

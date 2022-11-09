@@ -25,9 +25,9 @@ class AccessRuleFactory extends Factory
         return [
             'site_id'               => $sites[array_rand($sites, 1)]['id'],
             'description'           => $this->faker->sentence(3),
-            'check_attendee_level'  => $this->faker->numberBetween(0,99),
-            'check_age'             => $this->faker->numberBetween(0,1),
-            'single_pass'           => $this->faker->numberBetween(0,1)
+            'check_attendee_type'   => array_rand(config('codes.attendee.type'), 1),
+            'check_age'             => array_rand(config('codes.access_rule.check_age'), 1),
+            'single_pass'           => array_rand(config('codes.access_rule.single_pass'), 1)
         ];
     }
 }

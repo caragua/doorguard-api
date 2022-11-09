@@ -5,14 +5,24 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AccessRule;
+use App\Models\Site;
+use Illuminate\Validation\Rule;
 
 class AccessRuleController extends Controller
-{
-    private $codes = [
-        'check_age'     => [ 0,1 ],
-        'single_pass'   => [ 0,1 ]
-    ];
-    
+{    
+    public function options()
+    {
+        $sites = Site::all()->keyBy('id');
+
+        return response()->json([
+            'sites' => $sites,
+            'codes' => array_merge(
+                config('codes.access_rule'), 
+                ['attendee_type' => config('codes.attendee.type')]
+            )
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -21,17 +31,16 @@ class AccessRuleController extends Controller
     public function index()
     {
         $do = AccessRule::all();
-        return response()->json($do);
-    }
+        $sites = Site::all()->keyBy('id');
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data'  => $do, 
+            'sites' => $sites,
+            'codes' => array_merge(
+                config('codes.access_rule'), 
+                ['attendee_type' => config('codes.attendee.type')]
+            )
+        ]);
     }
 
     /**
@@ -45,15 +54,15 @@ class AccessRuleController extends Controller
         $request->validate([
             'site_id'               => 'required|integer|min:0',
             'description'           => 'required',
-            'check_attendee_level'  => 'required|integer|min:0',
-            'check_age'             => ['required', 'integer', Rule::in($this->codes['check_age'])],
-            'single_pass'           => ['required', 'integer', Rule::in($this->codes['single_pass'])]
+            'check_attendee_type'   => ['required', 'string', Rule::in(array_keys(config('codes.attendee.type')))],
+            'check_age'             => ['required', 'integer', Rule::in(array_keys(config('codes.access_rule.check_age')))],
+            'single_pass'           => ['required', 'integer', Rule::in(array_keys(config('codes.access_rule.single_pass')))]
         ]);
 
         $do = new AccessRule([
             'site_id'               => $request->post('site_id'),
             'description'           => $request->post('description'),
-            'check_attendee_level'  => $request->post('check_attendee_level'),
+            'check_attendee_type'   => $request->post('check_attendee_level'),
             'check_age'             => $request->post('check_age'),
             'single_pass'           => $request->post('single_pass'),
         ]);
@@ -72,19 +81,16 @@ class AccessRuleController extends Controller
     public function show($id)
     {
         $do = AccessRule::findOrFail($id);
+        $sites = Site::all()->keyBy('id');
 
-        return response()->json($do);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json([
+            'data'  => $do, 
+            'sites' => $sites,
+            'codes' => array_merge(
+                config('codes.access_rule'), 
+                ['attendee_type' => config('codes.attendee.type')]
+            )
+        ]);
     }
 
     /**
@@ -101,16 +107,16 @@ class AccessRuleController extends Controller
         $request->validate([
             'site_id'               => 'required|integer|min:0',
             'description'           => 'required',
-            'check_attendee_level'  => 'required|integer|min:0',
-            'check_age'             => ['required', 'integer', Rule::in($this->codes['check_age'])],
-            'single_pass'           => ['required', 'integer', Rule::in($this->codes['single_pass'])]
+            'check_attendee_type'   => ['required', 'string', Rule::in(array_keys(config('codes.attendee.type')))],
+            'check_age'             => ['required', 'integer', Rule::in(array_keys(config('codes.access_rule.check_age')))],
+            'single_pass'           => ['required', 'integer', Rule::in(array_keys(config('codes.access_rule.single_pass')))]
         ]);
 
-        $do->site_id = $request->post('site_id');
-        $do->description = $request->post('description');
-        $do->check_attendee_level = $request->post('check_attendee_level');
-        $do->check_age = $request->post('check_age');
-        $do->single_pass = $request->post('single_pass');
+        $do->site_id                = $request->post('site_id');
+        $do->description            = $request->post('description');
+        $do->check_attendee_type    = $request->post('check_attendee_type');
+        $do->check_age              = $request->post('check_age');
+        $do->single_pass            = $request->post('single_pass');
 
         $do->save();
 

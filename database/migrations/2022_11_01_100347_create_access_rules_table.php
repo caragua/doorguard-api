@@ -19,7 +19,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->tinyInteger('site_id');
             $table->string('description');
-            $table->tinyInteger('check_attendee_level');
+            $table->tinyInteger('check_attendee_type');
             $table->tinyInteger('check_age');
             $table->tinyInteger('single_pass');
         });

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class SiteController extends Controller
 {
-    public function showCodes()
+    public function options()
     {
         return response()->json(['codes' => config('codes.site')]);
     }

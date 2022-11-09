@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('attendees');
+
         Schema::create('attendees', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->softDeletes();
-            $table->string('inscription_number');
-            $table->tinyInteger('level');
+            $table->string('inscription_number'); // A123
+            $table->string('type', 2);
             $table->string('nickname');
-            $table->tinyInteger('is_minor');
             $table->string('card_number');
         });
     }
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendees');
+        //
     }
 };

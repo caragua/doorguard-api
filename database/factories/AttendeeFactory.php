@@ -19,15 +19,13 @@ class AttendeeFactory extends Factory
      */
     public function definition()
     {
-        $levels     = Attendee::$codes['level'];
-        $isminor    = Attendee::$codes['is_minor'];
+        $attendeeType = array_rand(config('codes.attendee.type'));
 
         return [
-            'inscription_number'    => $this->faker->bothify('?####'),
-            'level'                 => array_rand($levels, 1),
+            'inscription_number'    => $attendeeType . $this->faker->numerify('###'),
+            'type'                  => $attendeeType,
             'nickname'              => $this->faker->name(),
-            'is_minor'              => $this->faker->numberBetween(0,1),
-            'card_number'           => $this->faker->numerify('########')
+            'card_number'           => $this->faker->numerify('##########')
         ];
     }
 }

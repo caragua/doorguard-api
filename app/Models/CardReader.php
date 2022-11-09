@@ -14,7 +14,7 @@ class CardReader extends Model
     [
         'mac_address',
         'nickname',
-        'function',
+        'usage',
         'data'
     ];
 
@@ -22,7 +22,7 @@ class CardReader extends Model
     [
         'mac_address'   => 'string',
         'nickname'      => 'string',
-        'function'      => 'integer',
-        'data'          => 'string'
+        'usage'         => 'integer',
+        'data'          => 'string',
     ];
 }

@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendee;
+use Illuminate\Validation\Rule;
 
 class AttendeeController extends Controller
-{
-    private $codes = [];
-
-    public function __construct()
+{    
+    public function options()
     {
-        $this->codes = Attendee::$codes;
+        return response()->json([
+            'codes' => array_merge(
+                config('codes.attendee')
+            )
+        ]);
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -22,18 +25,14 @@ class AttendeeController extends Controller
      */
     public function index()
     {
-        $Attendees = Attendee::all();
-        return response()->json($Attendees);
-    }
+        $do = Attendee::all();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json([
+            'data'  => $do, 
+            'codes' => array_merge(
+                config('codes.attendee'), 
+            )
+        ]);
     }
 
     /**
@@ -45,16 +44,17 @@ class AttendeeController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'mac_address' => 'required|size:17',
-            'nickname' => 'required|max:32',
-            'function' => ['required', Rule::in($this->codes['function'])]
+            'inscription_number'    => 'required | integer',
+            'type'                  => ['required', 'string', Rule::in(array_keys(config('codes.attendee.type')))],
+            'nickname'              => 'required | string',
+            'card_number'           => 'required | string',
         ]);
 
         $do = new Attendee([
-            'mac_address'   => $request->post('mac_address'),
-            'nickname'      => $request->post('nickname'),
-            'function'      => $request->post('function'),
-            'data'          => $request->post('data')
+            'inscription_number'    => $request->post('inscription_number'),
+            'type'                  => $request->post('type'),
+            'nickname'              => $request->post('nickname'),
+            'card_number'           => $request->post('card_number'),
         ]);
 
         $do->save();
@@ -70,20 +70,14 @@ class AttendeeController extends Controller
      */
     public function show($id)
     {
-        $Attendee = Attendee::findOrFail($id);
+        $do = Attendee::findOrFail($id);
 
-        return response()->json($Attendee);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json([
+            'data'  => $do, 
+            'codes' => array_merge(
+                config('codes.attendee'), 
+            )
+        ]);
     }
 
     /**
@@ -98,15 +92,16 @@ class AttendeeController extends Controller
         $do = Attendee::findOrFail($id);
         
         $request->validate([
-            'mac_address' => 'required|size:17',
-            'nickname' => 'required|max:32',
-            'function' => ['required', Rule::in($this->codes['function'])]
+            'inscription_number'    => 'required | integer',
+            'type'                  => ['required', 'string', Rule::in(array_keys(config('codes.attendee.type')))],
+            'nickname'              => 'required | string',
+            'card_number'           => 'required | string',
         ]);
 
-        $do->mac_address = $request->post('mac_address');
-        $do->nickname = $request->post('nickname');
-        $do->function = $request->post('function');
-        $do->data = $request->post('data');
+        $do->inscription_number     = $request->post('inscription_number');
+        $do->type                   = $request->post('type');
+        $do->nickname               = $request->post('nickname');
+        $do->card_number            = $request->post('card_number');
 
         $do->save();
 

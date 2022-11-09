@@ -14,8 +14,17 @@ class AccessRule extends Model
     [
         'site_id',
         'description',
-        'check_attendee_level',
+        'check_attendee_type',
         'check_age',
         'single_pass'
+    ];
+
+    protected $casts = 
+    [
+        'site_id'               => 'integer',
+        'description'           => 'string',
+        'check_attendee_type'   => 'string',
+        'check_age'             => 'integer',
+        'single_pass'           => 'integer'
     ];
 }
